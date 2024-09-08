@@ -8,7 +8,7 @@ const TileRack = () => {
     const drawTiles = useGameStore((state) => state.drawTiles)
 
     return (
-    <div style={{ display: 'flex', margin: '20px 0'}}>
+    <div className="flex my-4">
         <button onClick={() => drawTiles(7)}>Draw Tiles</button>
         {tileRack.map((tile, index) => (
             <div key={index} style={{ width: '40px', height: '40px', border: '1px solid black', margin: '0 5px'}}>

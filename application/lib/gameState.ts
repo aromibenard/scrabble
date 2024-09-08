@@ -1,4 +1,4 @@
-import { GameState } from "@/types/logic";
+import { GameState, Tile } from "@/types/logic";
 import { create }  from "zustand";
 
 export const useGameStore = create<GameState>((set) => ({
@@ -8,8 +8,27 @@ export const useGameStore = create<GameState>((set) => ({
 
     // actions
     drawTiles: (num) => set((state) => {
-        const newTiles = state.tileBag.splice(0, num)
-        return { tileRack: [...state.tileRack, ...newTiles]}
+        if (!Array.isArray(state.tileBag)) {
+            console.error("tileBag is not an array");
+            return { tileRack: state.tileRack };
+        }
+
+        const newTileRack = [...state.tileRack]
+        const remainingTileBag = [...state.tileBag]
+        const drawnTiles: Tile[] = []
+
+        for(let i = 0; i < num && remainingTileBag.length > 0; i++) {
+            const randomIndex = Math.floor(Math.random() * remainingTileBag.length)
+            
+            // removes tile from the bag
+            const [tile] = remainingTileBag.splice(randomIndex, 1)
+            drawnTiles.push(tile)
+        }
+
+        return {
+            tileRack: [...newTileRack, ...drawnTiles],
+            tileBag: remainingTileBag
+        }
     }),
 
     placeTile: (row, col, tile) => set((state) => {
@@ -20,7 +39,7 @@ export const useGameStore = create<GameState>((set) => ({
 }))
 
 function generateTileBag() {
-    return [
+    const tiles = [
       // 1 Point Tiles
       ...Array(12).fill({ letter: 'E', points: 1 }),
       ...Array(9).fill({ letter: 'A', points: 1 }),
@@ -63,6 +82,21 @@ function generateTileBag() {
   
       // Blank Tiles (0 points)
       ...Array(2).fill({ letter: '', points: 0 }),
-    ];
+    ]
+    return shuffleLetters(tiles)
+}
+
+function shuffleLetters(array: any[]) {
+    let currentIndex = array.length, randomIndex
+
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex)
+        currentIndex--
+
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]]
+    }
+
+    return array
 }
   

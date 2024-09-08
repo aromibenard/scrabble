@@ -6,20 +6,12 @@ export default function Board() {
     const board = useGameStore((state) => state.board as BoardType)
 
     return (
-        <div style={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(15, 40px)',
-            gap:'5px'
-        }}>
+        <div className="w-full h-full grid-cols-15 gap-3 grid">
             {board.map((row, rowIndex) =>
                 row.map((cell, colIndex) => (
                     <div
                         key={`${rowIndex}-${colIndex}`}
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            border: '1px solid black'
-                        }} 
+                        className="h-[38px] w-[38px] border-2 border-gray-500"
                     >
                         {cell ? cell.letter : ''}
                     </div>
