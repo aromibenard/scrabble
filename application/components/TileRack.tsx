@@ -2,11 +2,12 @@
 
 import { useGameStore } from "@/lib/gameState"
 import { Tile } from "@/types/logic"
-import React from "react"
+import React, { useState } from "react"
 
 const TileRack = () => {
     const tileRack = useGameStore((state) => state.tileRack as Tile[])
     const drawTiles = useGameStore((state) => state.drawTiles)
+    const [draggedTile, setDraggedTile] = useState<{tile: Tile, index: number} | null>(null);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, tile: Tile, index: number) => {
       e.dataTransfer.setData('text/plain', JSON.stringify({ tile, index}))  

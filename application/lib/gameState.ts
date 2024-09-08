@@ -28,7 +28,10 @@ export const useGameStore = create<GameState>((set) => ({
 
     placeTile: (row, col, tile) => set((state) => {
         const newBoard = [...state.board];
-        newBoard[row][col] = { ...newBoard[row][col], tile };
+        
+        if (!newBoard[row][col]?.tile) {
+            newBoard[row][col] = { ...newBoard[row][col], tile };
+        }
         return { board: newBoard };
     }),
 
