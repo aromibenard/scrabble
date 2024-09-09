@@ -4,9 +4,9 @@ import styles from '@/styles/board.module.css'
 
 export default function Home() {
   return (
-    <div className="w-dvw md:max-w-5xl mx-auto bg-neutral-200 p-4 ">
-      <Board/>
-      <TileRack/>
-    </div>
-  );
+      <div className="w-dvw md:max-w-5xl mx-auto bg-neutral-200 p-4 ">
+        <Board/>
+        <TileRack/>
+      </div>
+  )
 }

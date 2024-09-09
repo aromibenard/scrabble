@@ -5,6 +5,7 @@ export const useGameStore = create<GameState>((set) => ({
     tileBag: generateTileBag(),
     tileRack: [],
     board: generateBoard(),
+    tilesToShake: new Set<number>(),
 
     // actions
     drawTiles: (num) => set((state) => {
@@ -39,6 +40,18 @@ export const useGameStore = create<GameState>((set) => ({
         const newTileRack = [...state.tileRack];
         newTileRack.splice(index, 1);
         return { tileRack: newTileRack };
+    }),
+
+    triggerTileShake: (index: number) => set((state) => {
+        const updatedTilesToShake = new Set(state.tilesToShake)
+        updatedTilesToShake.add(index)
+
+        setTimeout(() => {
+            updatedTilesToShake.delete(index);
+            set({ tilesToShake: updatedTilesToShake });
+        }, 500)
+        
+        return { tilesToShake: updatedTilesToShake }
     }),
 }))
 

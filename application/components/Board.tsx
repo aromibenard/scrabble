@@ -8,6 +8,42 @@ export default function Board() {
     const board = useGameStore((state) => state.board)
     const placeTile = useGameStore((state) => state.placeTile)
     const removeTileFromRack = useGameStore((state) => state.removeTileFromRack)
+    const triggerTileShake = useGameStore((state) => state.triggerTileShake)
+
+    // Function to check if a square 
+    // is empty and available for tile placement
+    const isSquareEmpty = (
+        row: number, col: number
+    ) => !board[row][col]?.tile
+
+    const isSquareValid = (row: number, col: number) : boolean => {
+        if (!isSquareEmpty(row, col)) {
+            return false
+        } else {
+            return true
+        }
+        
+    }
+   
+    // Handles the drop event when a tile is dropped
+    //  on a valid square
+    const handleTheDrop = (e: React.DragEvent<HTMLDivElement>, row: number, col: number) => {
+        e.preventDefault();
+
+        const data = e.dataTransfer.getData('text/plain')
+        const { tile, index } = JSON.parse(data) as { tile: Tile, index: number }
+
+        // Only allow dropping if the square is empty
+        if (isSquareValid(row, col)) {
+            placeTile(row, col, tile);
+            removeTileFromRack(index);
+        } else {
+            // Trigger shake animation and return tile to rack
+            triggerTileShake(index);
+            console.log("Invalid placement");
+        }
+
+    }
 
     const getSquareStyle = (square: Square) => {
         switch (square.type) {
@@ -24,16 +60,9 @@ export default function Board() {
             default:
                 return { backgroundColor: 'white' };
         }
+
     }
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, row: number, col: number) => {
-       e.preventDefault()
-       const data = e.dataTransfer.getData('text/plain')
-       const { tile, index } = JSON.parse(data) as { tile: Tile, index: number } 
-
-       placeTile(row, col, tile)
-       removeTileFromRack(index)
-    }
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
@@ -51,7 +80,7 @@ export default function Board() {
                 row.map((square, colIndex) => (
                     <div
                         key={`${rowIndex}-${colIndex}`}
-                        onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+                        onDrop={(e) => handleTheDrop(e, rowIndex, colIndex)}
                         onDragOver={handleDragOver}
                         style={{
                             width: '40px',
