@@ -6,6 +6,7 @@ export const useGameStore = create<GameState>((set) => ({
     tileRack: [],
     board: generateBoard(),
     tilesToShake: new Set<number>(),
+    tiles: {},
 
     // actions
     drawTiles: (num) => set((state) => {
@@ -37,10 +38,76 @@ export const useGameStore = create<GameState>((set) => ({
     }),
 
     removeTileFromRack: (index: number) => set((state) => {
-        const newTileRack = [...state.tileRack];
-        newTileRack.splice(index, 1);
+        const newTileRack = state.tileRack.filter((_, i) => i !== index);
         return { tileRack: newTileRack };
     }),
+
+    removeTileFromBoard: (row: number, col: number) => set((state) => {
+        const newBoard = state.board.map((r, rowIndex) => 
+            rowIndex === row
+                ? r.map((square, colIndex) => 
+                    colIndex === col 
+                        ? { ...square, tile: null } // Only update the targeted square
+                        : square
+                  )
+                : r
+        );
+        return { board: newBoard };
+    }),
+
+    handleTilePlaced: (index) => set((state) => {
+        const updatedTilesToShake = new Set(state.tilesToShake)
+        
+        if (updatedTilesToShake.has(index)) {
+            updatedTilesToShake.delete(index)
+        }
+        return { tilesToShake: updatedTilesToShake }
+    }),
+
+    moveTile: (fromRow: number, fromCol: number, toRow: number, toCol: number) =>
+        set((state) => {
+          const newBoard = state.board.map((row) =>
+            row.map((square) => ({ ...square }))
+          );
+      
+          if (
+            fromRow >= 0 &&
+            fromRow < newBoard.length &&
+            fromCol >= 0 &&
+            fromCol < newBoard[fromRow].length &&
+            toRow >= 0 &&
+            toRow < newBoard.length &&
+            toCol >= 0 &&
+            toCol < newBoard[toRow].length
+          ) {
+            const tile = newBoard[fromRow][fromCol].tile;
+            console.log(
+              "Moving tile from:",
+              fromRow,
+              fromCol,
+              "to:",
+              toRow,
+              toCol,
+              "Tile:",
+              tile
+            );
+      
+            if (tile) {
+              // Move the tile to the new position
+              newBoard[toRow][toCol] = { ...newBoard[toRow][toCol], tile };
+      
+              // **Clear the source position by setting tile to null**
+              newBoard[fromRow][fromCol] = { ...newBoard[fromRow][fromCol], tile: null };
+      
+              console.log("New board state after move:", newBoard);
+            } else {
+              console.log("No tile found at the source position.");
+            }
+          }
+      
+          return { board: newBoard };
+        }),
+    
 
     triggerTileShake: (index: number) => set((state) => {
         const updatedTilesToShake = new Set(state.tilesToShake)

@@ -8,10 +8,8 @@ import ATile from "./Tile"
 const TileRack = () => {
     const tileRack = useGameStore((state) => state.tileRack as Tile[])
     const drawTiles = useGameStore((state) => state.drawTiles)
-
-    // const handleDragStart = (e: React.DragEvent<HTMLDivElement>, tile: Tile, index: number) => {
-    //   e.dataTransfer.setData('text/plain', JSON.stringify({ tile, index}))  
-    // }
+    const triggerTileShake = useGameStore((state) => state.triggerTileShake)
+    // const [placedTiles, setPlacedTiles] = useState<{ [key: number]: boolean }>({})
 
     return (
     <div className="flex my-4 mx-auto bg-sky-500 rounded shadow-md p-4">
@@ -21,6 +19,8 @@ const TileRack = () => {
                 key={index} 
                 tile={tile}
                 index={index}
+                triggerTileShake={triggerTileShake}
+                // isPlaced={placedTiles[index] ?? false}
             />
         ))}
         
