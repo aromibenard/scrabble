@@ -63,6 +63,7 @@ model Player {
   score  Int      @default(0)
   tiles  String[] @default([])
   isHost Boolean  @default(false)
+  createdAt DateTime @default(now()) // turn order
 
   user User @relation(fields: [userId], references: [clerkId])
   game Game @relation(fields: [gameId], references: [id])
